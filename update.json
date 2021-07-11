@@ -1,0 +1,16 @@
+{
+    "name":"v0.1.0",
+    "notes":"Initial Version",
+    "pub_date":"2021-07-10T22:06:42Z",
+    "platforms": {
+        "darwin": {
+            "url":"https://github.com/AsyncBanana/Serenity-Editor/releases/download/app-v0.1.0/Serenity.Editor.app.tar.gz"
+        },
+        "linux": {
+            "url":"https://github.com/AsyncBanana/Serenity-Editor/releases/download/app-v0.1.0/serenity-editor_0.1.0_amd64.AppImage"
+        },
+        "win64": {
+            "url":"https://github.com/AsyncBanana/Serenity-Editor/releases/download/app-v0.1.0/Serenity.Editor_0.1.0_x64.msi.zip"
+        }
+    }
+}

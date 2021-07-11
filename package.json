@@ -7,8 +7,7 @@
     "tauri": "tauri",
     "vite": "vite",
     "start": "vite",
-    "start-tauri": "vite --mode tauri",
-    "sign": "tauri sign -g -w ./private.key"
+    "start-tauri": "vite --mode tauri"
   },
   "keywords": [
     "Markdown",
