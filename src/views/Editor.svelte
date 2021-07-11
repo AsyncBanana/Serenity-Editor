@@ -304,9 +304,9 @@
 </div>
 {#if modal}
 	{#if modal === "image"}
-		<Modal>
+		<Modal exit={()=>modal=false}>
 			<span slot="body"
-				>Enter the url of the image you want to use
+				><h1 class="font-bold text-xl">Insert Image</h1>
 				<Input
 					bind:value={imageUrl}
 					name="ImgUrlInput"
@@ -342,8 +342,9 @@
 			</span>
 		</Modal>
 	{:else if modal === "settings"}
-		<Modal>
+		<Modal exit={()=>modal=false}>
 			<span slot="body">
+				<h1 class="font-bold text-xl">Settings</h1>
 				<div class="form-control">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label class="cursor-pointer label">
@@ -410,7 +411,7 @@
     text-transform: uppercase;
   }{
         body: 'Enter the url of the image you want to insert',
-        
+
       }
   table thead th:last-child {
     border-top-right-radius: 0.5rem;

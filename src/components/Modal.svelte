@@ -1,7 +1,8 @@
 <script>
   import { fly, fade } from 'svelte/transition';
+  export let exit;
 </script>
-<div class="modal visible opacity-100 pointer-events-auto" transition:fade="{{duration: 200}}">
+<div class="modal visible opacity-100 pointer-events-auto" transition:fade="{{duration: 200}}" on:click={exit}>
   <div class="modal-box" transition:fly="{{duration: 200, y:20}}">
     <span><slot name="body" /></span>
     <div class="modal-action">
