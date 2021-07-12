@@ -127,7 +127,7 @@
 </script>
 
 {#if editor}
-	<div class="btn-group fixed top-3 z-50" id="topMenu">
+	<div class="btn-group fixed top-3 z-40" id="topMenu">
 		<NavDropdown
 			first
 			buttons={[
