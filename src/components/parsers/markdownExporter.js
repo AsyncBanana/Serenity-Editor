@@ -89,10 +89,11 @@ const typeHandlers = {
 	},
 	blockQuote: {
 		gen: (obj) => {
-			return `> ${convertSubSection(obj.content)}`
-		}
-	}
+			return `> ${convertSubSection(obj.content)}`;
+		},
+	},
 };
+
 function convertSubSection(section) {
 	return `${typeHandlers[section.type].gen(section)}${
 		typeHandlers[section.type].inline ? "" : "\n\n"
@@ -108,6 +109,7 @@ function convertSubSectionArray(sectionArray) {
 	});
 	return result;
 }
+
 /**
  * Converts a ProseMirror JSON document
  * @param {Object} doc The ProseMirror JSON document

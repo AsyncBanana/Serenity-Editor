@@ -7,7 +7,7 @@
 	import Input from "../components/Input.svelte";
 	import Welcome from "../components/welcome.js";
 	import { readFile, saveFile } from "fileDialog";
-	import { convertToMarkdown } from "../components/parsers/markdownConverter.js";
+	import { convertToMarkdown } from "../components/parsers/markdownExporter.js";
 	// Nodes
 	import Document from "@tiptap/extension-document";
 	import Paragraph from "@tiptap/extension-paragraph";
@@ -178,6 +178,7 @@
 				fill="none"
 				viewBox="0 0 24 24"
 				stroke="currentColor"
+				aria-label="Menu"
 			>
 				<path
 					stroke-linecap="round"
@@ -465,7 +466,8 @@
     --tw-bg-opacity: 1;
     background-color: hsla(var(--b1) / var(--tw-bg-opacity, 1));
   }*/
-	.ProseMirror h1 .ProseMirror h2,
+	.ProseMirror h1,
+	.ProseMirror h2,
 	.ProseMirror h3,
 	.ProseMirror h4,
 	.ProseMirror h5,
