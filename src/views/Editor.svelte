@@ -44,12 +44,12 @@
 	let editor;
 	let modal = false;
 	let imageUrl = "";
-
 	// Settings
 	let settings = {};
 	let settingsDefaults = {
 		Typography: true,
 		NewlineMenu: true,
+		PickUpFromExit: true,
 	};
 	let localStorageRes = JSON.parse(localStorage.getItem("Settings"));
 	if (!localStorageRes) {
@@ -67,7 +67,10 @@
 		localStorage.setItem("Settings", JSON.stringify(settings));
 		return value;
 	}
-
+	let savedText = "";
+	if (settings.PickUpFromExit) {
+		savedText = localStorage.getItem("Text");
+	}
 	// Editor
 	onMount(() => {
 		editor = new Editor({
@@ -110,18 +113,19 @@
 					placeholder: "Write the next big thing...",
 				}),
 			],
-			content: "<h1></h1>",
+			content: savedText ? savedText : "<h1></h1>",
 			onTransaction: () => {
-				// force re-render so `editor.isActive` works as expected
 				editor = editor;
 			},
 		});
 	});
-
 	onDestroy(() => {
 		if (editor) {
 			editor.destroy();
 		}
+	});
+	addEventListener("visibilitychange", () => {
+		localStorage.setItem("Text", editor.getHTML());
 	});
 	Welcome();
 </script>
@@ -304,7 +308,7 @@
 </div>
 {#if modal}
 	{#if modal === "image"}
-		<Modal exit={()=>modal=false}>
+		<Modal exit={() => (modal = false)}>
 			<span slot="body"
 				><h1 class="font-bold text-xl">Insert Image</h1>
 				<Input
@@ -342,7 +346,7 @@
 			</span>
 		</Modal>
 	{:else if modal === "settings"}
-		<Modal exit={()=>modal=false}>
+		<Modal exit={() => (modal = false)}>
 			<span slot="body">
 				<h1 class="font-bold text-xl">Settings</h1>
 				<div class="form-control">
@@ -369,6 +373,21 @@
 								checked={settings.NewlineMenu}
 								on:change={() =>
 									setSetting("NewlineMenu", !settings.NewlineMenu)}
+								name="NewlineMenu"
+								class="toggle toggle-primary"
+							/>
+							<span class="toggle-mark" />
+						</div>
+					</label>
+					<!-- svelte-ignore a11y-label-has-associated-control -->
+					<label class="cursor-pointer label">
+						<span class="label-text">Save where you left off</span>
+						<div>
+							<input
+								type="checkbox"
+								checked={settings.PickUpFromExit}
+								on:change={() =>
+									setSetting("PickUpFromExit", !settings.PickUpFromExit)}
 								name="NewlineMenu"
 								class="toggle toggle-primary"
 							/>
