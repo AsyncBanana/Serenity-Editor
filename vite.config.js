@@ -20,8 +20,5 @@ export default ({ command, mode }) => {
         ),
       },
     },
-    build: {
-      outDir: mode === "tauri" ? "dist" : "docs"
-    }
   });
 };

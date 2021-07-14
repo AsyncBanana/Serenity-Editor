@@ -30,6 +30,10 @@ If you just want to try Serenity out, or you are worried about security, you can
 
 # Roadmap
 
+- Build landing page
+
+- Document usage more
+
 - Add Markdown importing
 
 - Add Cloud sync

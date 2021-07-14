@@ -170,6 +170,12 @@
 						});
 					},
 				},
+				{
+					name: "About",
+					click: () => {
+						modal = "about";
+					},
+				},
 			]}
 		>
 			<svg
@@ -404,6 +410,24 @@
 						modal = false;
 					}}>Exit</button
 				>
+			</span>
+		</Modal>
+	{:else if modal === "about"}
+		<Modal exit={() => (modal = false)}>
+			<span slot="body">
+				<h1 class="font-bold text-xl">About</h1>
+				<p>For more information and documentation on Serenity Editor, please visit the GitHub link below</p>
+			</span>
+			<span slot="actions">
+				<button
+					class="btn btn-outline"
+					on:click={() => {
+						modal = false;
+					}}>Exit</button
+				>
+				<a class="btn" href="https://github.com/AsyncBanana/Serenity-Editor" alt="Link to GitHub" target="_blank">
+					GitHub
+				</a>
 			</span>
 		</Modal>
 	{/if}
