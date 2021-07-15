@@ -1,7 +1,5 @@
 <script>
-	import Editor from "./views/Editor.svelte";
 	import { registerSW } from "virtual:pwa-register";
-	import { fly } from "svelte/transition";
 	let serviceWorkerUpdate = false;
 	let updateSW = () => {};
 	if (import.meta.env.MODE !== "tauri") {
@@ -46,6 +44,3 @@
 		</div>
 	</div>
 {/if}
-<main class="m-4">
-	<Editor />
-</main>

@@ -1,20 +1,21 @@
-<script type="module">
+<script>
 	// Other
 	import { onMount, onDestroy } from "svelte";
 	import { Editor } from "@tiptap/core";
-	import NavDropdown from "../components/NavDropdown.svelte";
-	import Modal from "../components/Modal.svelte";
-	import Input from "../components/Input.svelte";
-	import Welcome from "../components/welcome.js";
-	import { readFile, saveFile } from "fileDialog";
-	import { convertToMarkdown } from "../components/parsers/markdownExporter.js";
+	import NavDropdown from "$lib/components/NavDropdown.svelte";
+	import Modal from "$lib/components/Modal.svelte";
+	import Input from "$lib/components/Input.svelte";
+	import Welcome from "$lib/modules/welcome.js";
+	import { fileOpen, fileSave } from "browser-fs-access";
+	import { convertToMarkdown } from "$lib/modules/parsers/markdownExporter.js";
+	import PWA from "$lib/components/PWA.svelte";
 	// Nodes
 	import Document from "@tiptap/extension-document";
 	import Paragraph from "@tiptap/extension-paragraph";
 	import Text from "@tiptap/extension-text";
 	import Blockquote from "@tiptap/extension-blockquote";
 	import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-	import lowlight from "../components/lowLightBuild.js";
+	import lowlight from "$lib/modules/lowLightBuild.js";
 	import Heading from "@tiptap/extension-heading";
 	import Image from "@tiptap/extension-image";
 	import BulletList from "@tiptap/extension-bullet-list";
@@ -44,6 +45,9 @@
 	let editor;
 	let modal = false;
 	let imageUrl = "";
+	let tableRows = 3;
+	let tableColumns = 3;
+	let currentFile = null;
 	// Settings
 	let settings = {};
 	let settingsDefaults = {
@@ -132,6 +136,7 @@
 
 {#if editor}
 	<div class="btn-group fixed top-3 z-40" id="topMenu">
+		<!-- svelte-ignore missing-declaration -->
 		<NavDropdown
 			first
 			buttons={[
@@ -142,12 +147,15 @@
 					},
 				},
 				{
-					name: "Open File",
+					name: "Open File...",
 					click: async () => {
 						try {
-							const file = await readFile({
-								fileTypes: ["txt", "html"],
+							const file = await fileOpen({
+								extensions: [".html", ".txt"],
+								description: "Input text or HTML files",
+								multiple: false,
 							});
+							currentFile = file.handle
 							editor.commands.setContent(await file.text());
 						} catch (err) {
 							console.log(`Error opening file: ${err}`);
@@ -155,19 +163,30 @@
 					},
 				},
 				{
-					name: "Save File",
-					click: () => {
-						saveFile(editor.getHTML(), {
-							name: "document.html",
+					name: "Save",
+					click: async () => {
+						currentFile = await fileSave(new Blob([editor.getHTML()], {type : 'text/html'}), {
+							fileName: "document.html",
+							extensions: [".html"],
+						}, currentFile);
+					},
+				},
+				{
+					name: "Save As...",
+					click: async () => {
+						currentFile = await fileSave(new Blob([editor.getHTML()], {type : 'text/html'}), {
+							fileName: "document.html",
+							extensions: [".html"],
 						});
 					},
 				},
 				{
 					name: "Export as Markdown",
 					click: () => {
-						saveFile(convertToMarkdown(editor.getJSON()), {
+						fileSave(new Blob([convertToMarkdown(editor.getJSON())])), {
 							name: "document.md",
-						});
+							extensions: ['.md','.mdk','.mdtext']
+						};
 					},
 				},
 				{
@@ -219,6 +238,14 @@
 				},
 			]}>Headings</NavDropdown
 		>
+		<button
+			on:click={() => {
+				modal = "table";
+			}}
+			class="btn"
+		>
+			Table
+		</button>
 		<button
 			on:click={() => {
 				modal = "image";
@@ -416,7 +443,10 @@
 		<Modal exit={() => (modal = false)}>
 			<span slot="body">
 				<h1 class="font-bold text-xl">About</h1>
-				<p>For more information and documentation on Serenity Editor, please visit the GitHub link below</p>
+				<p>
+					For more information and documentation on Serenity Editor, please
+					visit the GitHub link below
+				</p>
 			</span>
 			<span slot="actions">
 				<button
@@ -425,12 +455,64 @@
 						modal = false;
 					}}>Exit</button
 				>
-				<a class="btn" href="https://github.com/AsyncBanana/Serenity-Editor" alt="Link to GitHub" target="_blank">
+				<a
+					class="btn"
+					href="https://github.com/AsyncBanana/Serenity-Editor"
+					alt="Link to GitHub"
+					target="_blank"
+				>
 					GitHub
 				</a>
 			</span>
 		</Modal>
+	{:else if modal === "table"}
+		<Modal exit={() => (modal = false)}>
+			<span slot="body">
+				<h1 class="font-bold text-xl">Insert Table (WIP)</h1>
+				<Input
+					bind:value={tableRows}
+					name="tableRowsInput"
+					placeholder="Enter number of rows here"
+					bordered={true}
+					validate={(value) => !isNaN(value)}
+				/>
+				<Input
+					bind:value={tableColumns}
+					name="tableColumnsInput"
+					placeholder="Enter number of columns here"
+					bordered={true}
+					validate={(value) => !isNaN(value)}
+				/>
+			</span>
+			<span slot="actions">
+				<button
+					class="btn btn-outline"
+					on:click={() => {
+						modal = false;
+					}}>Cancel</button
+				>
+				<button
+					class="btn"
+					on:click={() => {
+						if (!isNaN(tableRows) && !isNaN(tableColumns)) {
+							editor
+								.chain()
+								.focus()
+								.insertTable({
+									rows: tableRows || 0,
+									columms: tableColumns || 0,
+								})
+								.run();
+							modal = false;
+						}
+					}}>Add Image</button
+				>
+			</span>
+		</Modal>
 	{/if}
+{/if}
+{#if PWA}
+	<PWA />
 {/if}
 <div bind:this={element} class="mt-30" />
 
@@ -438,58 +520,67 @@
 	.ProseMirror {
 		outline: none;
 	}
-	/*table td,
-  table th {
-    padding: 1rem;
-    white-space: nowrap;
-  }
-  table tfoot td,
-  table tfoot th,
-  table thead td,
-  table thead th {
-    --tw-bg-opacity: 1;
-    background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
-    font-weight: 700;
-    font-size: 0.75rem;
-    line-height: 1rem;
-    text-transform: uppercase;
-  }{
-        body: 'Enter the url of the image you want to insert',
+	table {
+		border-collapse: collapse;
+		table-layout: fixed;
+		width: 100%;
+		margin: 0;
+		overflow: hidden;
+	}
+	table tfoot td:first-child,
+	table tfoot th:first-child,
+	table thead td:first-child,
+	table thead th:first-child {
+		border-top-left-radius: 0.5rem;
+		border-bottom-left-radius: 0.5rem;
+	}
+	table tfoot td:last-child,
+	table tfoot th:last-child,
+	table thead td:last-child,
+	table thead th:last-child {
+		border-top-right-radius: 0.5rem;
+		border-bottom-right-radius: 0.5rem;
+	}
+	td,
+	th {
+		min-width: 1em;
+		border: 2px solid #ced4da;
+		padding: 1rem;
+		vertical-align: top;
+		box-sizing: border-box;
+		position: relative;
+	}
+	td *,
+	th * {
+		margin-bottom: 0;
+	}
+	th {
+		font-weight: bold;
+		text-align: left;
+		background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
+	}
 
-      }
-  table thead th:last-child {
-    border-top-right-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-  }
-  table {
-    display: table;
-    text-align: left;
-    position: relative;
-    border-collapse: collapse;
-    text-indent: 0;
-    border-color: inherit;
-  }
-  table:not(.table-zebra) tbody tr:not(:last-child) td,
-  table:not(.table-zebra) tbody tr:not(:last-child) th,
-  table:not(.table-zebra) tfoot tr:not(:last-child) td,
-  table:not(.table-zebra) tfoot tr:not(:last-child) th,
-  table:not(.table-zebra) thead tr:not(:last-child) td,
-  table:not(.table-zebra) thead tr:not(:last-child) th {
-    --tw-border-opacity: 1;
-    border-color: hsla(var(--b2) / var(--tw-border-opacity, 1));
-    border-bottom-width: 1px;
-  }
-  table th:first-child {
-    position: sticky;
-    position: -webkit-sticky;
-    left: 0;
-    z-index: 10;
-  }
-  table tbody td,
-  table tbody th {
-    --tw-bg-opacity: 1;
-    background-color: hsla(var(--b1) / var(--tw-bg-opacity, 1));
-  }*/
+	.selectedCell:after {
+		z-index: 2;
+		position: absolute;
+		content: "";
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background: rgba(200, 200, 255, 0.4);
+		pointer-events: none;
+	}
+
+	.column-resize-handle {
+		position: absolute;
+		right: -2px;
+		top: 0;
+		bottom: -2px;
+		width: 4px;
+		background-color: #adf;
+		pointer-events: none;
+	}
 	.ProseMirror h1,
 	.ProseMirror h2,
 	.ProseMirror h3,

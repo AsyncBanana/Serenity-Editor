@@ -4,10 +4,11 @@
   "description": "A simple Markdown and WYSIWYG editor",
   "main": "dist/index.js",
   "scripts": {
-    "tauri": "tauri",
-    "vite": "vite",
-    "start": "vite",
-    "start-tauri": "vite --mode tauri"
+    "sveltekit": "svelte-kit",
+    "build": "svelte-kit build",
+    "start": "svelte-kit dev",
+    "lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
+    "format": "prettier --write --plugin-search-dir=. ."
   },
   "keywords": [
     "Markdown",
@@ -20,19 +21,21 @@
   "author": "AsyncBanana",
   "license": "MIT",
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
-    "@tauri-apps/cli": "^1.0.0-beta.5",
+    "eslint": "^7.22.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-svelte3": "^3.2.0",
     "prettier": "^2.3.2",
     "prettier-plugin-svelte": "^2.3.1",
     "rollup-plugin-visualizer": "^5.5.1",
-    "svelte-preprocess": "^4.7.3",
+    "svelte-preprocess": "^4.7.4",
     "vite": "^2.4.0",
     "vite-plugin-pwa": "^0.8.1",
     "vite-plugin-windicss": "^1.2.3",
     "windicss": "^3.1.4"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.0.0-beta.4",
+    "@sveltejs/adapter-static": "^1.0.0-next.13",
+    "@sveltejs/kit": "^1.0.0-next.128",
     "@tiptap/core": "^2.0.0-beta.85",
     "@tiptap/extension-blockquote": "^2.0.0-beta.14",
     "@tiptap/extension-bold": "^2.0.0-beta.14",
@@ -62,8 +65,8 @@
     "@tiptap/extension-task-list": "^2.0.0-beta.16",
     "@tiptap/extension-text": "^2.0.0-beta.12",
     "@tiptap/extension-typography": "^2.0.0-beta.12",
+    "browser-fs-access": "^0.18.0",
     "daisyui": "^1.6.1",
-    "file-saver": "^2.0.5",
     "lowlight": "^1.20.0",
     "svelte": "^3.38.3"
   },
