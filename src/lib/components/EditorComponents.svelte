@@ -183,7 +183,7 @@
 				{
 					name: "Export as Markdown",
 					click: () => {
-						fileSave(new Blob([convertToMarkdown(editor.getJSON())])), {
+						fileSave(new Blob([convertToMarkdown(editor.getJSON())], {type: 'text/markdown'})), {
 							name: "document.md",
 							extensions: ['.md','.mdk','.mdtext']
 						};
@@ -280,13 +280,6 @@
 		>
 			&lt;Code/&gt;
 		</button>
-		<button
-			on:click={() => editor.chain().focus().setParagraph().run()}
-			class:btn-active={editor.isActive("paragraph")}
-			class="btn"
-		>
-			Plain
-		</button>
 	</div>
 {/if}
 <div class="btn-group m-auto" id="bubble-menu">
@@ -336,6 +329,12 @@
 			class="btn btn-sm"
 			class:btn-active={editor ? editor.isActive("bulletList") : false}
 			on:click={() => editor.chain().focus().toggleBulletList().run()}
+			>Bullet List</button
+		>
+		<button
+			class="btn btn-sm"
+			class:btn-active={editor ? editor.isActive("orderedList") : false}
+			on:click={() => editor.chain().focus().toggleOrderedList().run()}
 			>Bullet List</button
 		>
 	{/if}

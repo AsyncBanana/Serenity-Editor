@@ -2,13 +2,11 @@
 	import { registerSW } from "virtual:pwa-register";
 	let serviceWorkerUpdate = false;
 	let updateSW = () => {};
-	if (import.meta.env.MODE !== "tauri") {
-		updateSW = registerSW({
-			onNeedRefresh() {
-				serviceWorkerUpdate = true;
-			},
-		});
-	}
+	updateSW = registerSW({
+		onNeedRefresh() {
+			serviceWorkerUpdate = true;
+		},
+	});
 </script>
 
 {#if serviceWorkerUpdate === true}
