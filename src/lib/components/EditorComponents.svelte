@@ -8,7 +8,6 @@
 	import Welcome from "$lib/modules/welcome.js";
 	import { fileOpen, fileSave } from "$lib/modules/browser-fs-access/index.js";
 	import { convertToMarkdown } from "$lib/modules/parsers/markdownExporter.js";
-	import PWA from "$lib/components/PWA.svelte";
 	// Nodes
 	import Document from "@tiptap/extension-document";
 	import Paragraph from "@tiptap/extension-paragraph";
@@ -509,9 +508,6 @@
 			</span>
 		</Modal>
 	{/if}
-{/if}
-{#if PWA}
-	<PWA />
 {/if}
 <div bind:this={element} class="mt-30" />
 
