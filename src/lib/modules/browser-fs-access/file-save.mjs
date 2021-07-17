@@ -1,0 +1,2 @@
+// @license © 2020 Google LLC. Licensed under the Apache License, Version 2.0.
+import e from"./supported.mjs";const s=e?"chooseFileSystemEntries"===e?import("./fs-access-legacy/file-save.mjs"):import("./fs-access/file-save.mjs"):import("./legacy/file-save.mjs");export async function fileSave(...e){return(await s).default(...e)}

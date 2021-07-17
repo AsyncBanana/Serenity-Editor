@@ -1,0 +1,2 @@
+// @license © 2020 Google LLC. Licensed under the Apache License, Version 2.0.
+import e from"./supported.mjs";const s=e?"chooseFileSystemEntries"===e?import("./fs-access-legacy/file-open.mjs"):import("./fs-access/file-open.mjs"):import("./legacy/file-open.mjs");export async function fileOpen(...e){return(await s).default(...e)}

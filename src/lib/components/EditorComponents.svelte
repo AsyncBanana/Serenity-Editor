@@ -6,7 +6,7 @@
 	import Modal from "$lib/components/Modal.svelte";
 	import Input from "$lib/components/Input.svelte";
 	import Welcome from "$lib/modules/welcome.js";
-	import { fileOpen, fileSave } from "browser-fs-access";
+	import { fileOpen, fileSave } from "$lib/modules/browser-fs-access/index.js";
 	import { convertToMarkdown } from "$lib/modules/parsers/markdownExporter.js";
 	import PWA from "$lib/components/PWA.svelte";
 	// Nodes
