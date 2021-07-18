@@ -3,7 +3,6 @@
   "lang": "en",
   "name": "Serenity Editor",
   "short_name": "Serenity Editor",
-  "scope": "/Editor",
   "display": "standalone",
   "start_url": "/Editor",
   "background_color": "#3d4451",

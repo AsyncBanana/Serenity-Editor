@@ -8,6 +8,7 @@
 	import Welcome from "$lib/modules/welcome.js";
 	import { fileOpen, fileSave } from "$lib/modules/browser-fs-access/index.js";
 	import { convertToMarkdown } from "$lib/modules/parsers/markdownExporter.js";
+	import { convertFromMarkdown } from "$lib/modules/parsers/markdownImporter.js";
 	// Nodes
 	import Document from "@tiptap/extension-document";
 	import Paragraph from "@tiptap/extension-paragraph";
@@ -186,6 +187,17 @@
 							name: "document.md",
 							extensions: ['.md','.mdk','.mdtext']
 						};
+					},
+				},
+				{
+					name: "Import as Markdown",
+					click: async () => {
+						const file = await fileOpen({
+								extensions: [".md",".mdk",".mdtext"],
+								description: "Markdown files",
+								multiple: false,
+							});
+						editor.commands.setContent(convertFromMarkdown(await file.text()))
 					},
 				},
 				{
