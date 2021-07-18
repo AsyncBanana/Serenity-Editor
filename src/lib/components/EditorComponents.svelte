@@ -2,6 +2,7 @@
 	// Other
 	import { onMount, onDestroy } from "svelte";
 	import { Editor } from "@tiptap/core";
+	import PWA from "$lib/components/PWA.svelte";
 	import NavDropdown from "$lib/components/NavDropdown.svelte";
 	import Modal from "$lib/components/Modal.svelte";
 	import Input from "$lib/components/Input.svelte";
@@ -694,3 +695,4 @@
 		font-weight: 700;
 	}
 </style>
+   <PWA></PWA>
