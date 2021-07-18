@@ -1,0 +1,37 @@
+{
+    "dir": "ltr",
+    "lang": "en",
+    "name": "Serenity Editor",
+    "short_name": "Serenity Editor",
+    "scope": "/Editor",
+    "display": "standalone",
+    "start_url": "/Editor",
+    "background_color": "#3d4451",
+    "theme_color": "#5711f8",
+    "description": "The lightest rich text editor you have ever seen",
+    "orientation": "any",
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "icons": [
+      {
+        "src": "/favicon.ico",
+        "sizes": "32x32"
+      },
+      {
+        "src": "/logo192x192.png",
+        "sizes": "192x192",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/logo512x512.png",
+        "sizes": "512x512",
+        "purpose": "any maskable"
+      }
+    ],
+    "screenshots": [],
+    "categories": [
+      "productivity",
+      "utilities",
+      "editing"
+    ]
+  }
