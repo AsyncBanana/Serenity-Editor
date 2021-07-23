@@ -2,14 +2,14 @@
 	// Other
 	import { onMount, onDestroy } from "svelte";
 	import { Editor } from "@tiptap/core";
-	//import PWA from "$lib/components/PWA.svelte";
 	import NavDropdown from "$lib/components/NavDropdown.svelte";
 	import Modal from "$lib/components/Modal.svelte";
 	import Input from "$lib/components/Input.svelte";
 	import Welcome from "$lib/modules/welcome.js";
 	import { fileOpen, fileSave } from "$lib/modules/browser-fs-access/index.js";
-	import { convertToMarkdown } from "$lib/modules/parsers/markdownExporter.js";
-	import { convertFromMarkdown } from "$lib/modules/parsers/markdownImporter.js";
+	import convertToMarkdown from "$lib/modules/parsers/markdownExporter.js";
+	import convertFromMarkdown from "$lib/modules/parsers/markdownImporter.js";
+	import watchMedia from "svelte-media";
 	// Nodes
 	import Document from "@tiptap/extension-document";
 	import Paragraph from "@tiptap/extension-paragraph";
@@ -49,6 +49,7 @@
 	let tableRows = 3;
 	let tableColumns = 3;
 	let currentFile = null;
+	let screenSize = watchMedia({large: "(min-width: 768px)"});
 	// Settings
 	let settings = {};
 	let settingsDefaults = {
@@ -136,7 +137,7 @@
 </script>
 
 {#if editor}
-	<div class="btn-group fixed top-3 z-40" id="topMenu">
+	<div class="btn-group fixed top-10 z-40" id="topMenu">
 		<!-- svelte-ignore missing-declaration -->
 		<NavDropdown
 			first
@@ -156,7 +157,7 @@
 								description: "Input text or HTML files",
 								multiple: false,
 							});
-							currentFile = file.handle
+							currentFile = file.handle;
 							editor.commands.setContent(await file.text());
 						} catch (err) {
 							console.log(`Error opening file: ${err}`);
@@ -166,39 +167,51 @@
 				{
 					name: "Save",
 					click: async () => {
-						currentFile = await fileSave(new Blob([editor.getHTML()], {type : 'text/html'}), {
-							fileName: "document.html",
-							extensions: [".html"],
-						}, currentFile);
+						currentFile = await fileSave(
+							new Blob([editor.getHTML()], { type: "text/html" }),
+							{
+								fileName: "document.html",
+								extensions: [".html"],
+							},
+							currentFile
+						);
 					},
 				},
 				{
 					name: "Save As...",
 					click: async () => {
-						currentFile = await fileSave(new Blob([editor.getHTML()], {type : 'text/html'}), {
-							fileName: "document.html",
-							extensions: [".html"],
-						});
+						currentFile = await fileSave(
+							new Blob([editor.getHTML()], { type: "text/html" }),
+							{
+								fileName: "document.html",
+								extensions: [".html"],
+							}
+						);
 					},
 				},
 				{
 					name: "Export as Markdown",
 					click: () => {
-						fileSave(new Blob([convertToMarkdown(editor.getJSON())], {type: 'text/markdown'})), {
-							name: "document.md",
-							extensions: ['.md','.mdk','.mdtext']
-						};
+						fileSave(
+							new Blob([convertToMarkdown(editor.getJSON())], {
+								type: "text/markdown",
+							})
+						),
+							{
+								name: "document.md",
+								extensions: [".md", ".mdk", ".mdtext"],
+							};
 					},
 				},
 				{
 					name: "Import as Markdown",
 					click: async () => {
 						const file = await fileOpen({
-								extensions: [".md",".mdk",".mdtext"],
-								description: "Markdown files",
-								multiple: false,
-							});
-						editor.commands.setContent(convertFromMarkdown(await file.text()))
+							extensions: [".md", ".mdk", ".mdtext"],
+							description: "Markdown files",
+							multiple: false,
+						});
+						editor.commands.setContent(convertFromMarkdown(await file.text()));
 					},
 				},
 				{
@@ -252,46 +265,48 @@
 		>
 		<button
 			on:click={() => {
-				modal = "table";
-			}}
-			class="btn"
-		>
-			Table
-		</button>
-		<button
-			on:click={() => {
 				modal = "image";
 			}}
 			class="btn">Add Image</button
 		>
-		<button
-			on:click={() => editor.chain().focus().toggleBold().run()}
-			class:btn-active={editor.isActive("bold")}
-			class="btn"
-		>
-			<strong>Bold</strong>
-		</button>
-		<button
-			on:click={() => editor.chain().focus().toggleItalic().run()}
-			class:btn-active={editor.isActive("italic")}
-			class="btn"
-		>
-			<i>Italic</i>
-		</button>
-		<button
-			on:click={() => editor.chain().focus().toggleStrike().run()}
-			class:btn-active={editor.isActive("strike")}
-			class="btn"
-		>
-			<s>Strike</s>
-		</button>
-		<button
-			on:click={() => editor.chain().focus().toggleCodeBlock().run()}
-			class:btn-active={editor.isActive("codeBlock")}
-			class="btn"
-		>
-			&lt;Code/&gt;
-		</button>
+		{#if $screenSize.large}
+			<button
+				on:click={() => {
+					modal = "table";
+				}}
+				class="btn"
+			>
+				Table
+			</button>
+			<button
+				on:click={() => editor.chain().focus().toggleBold().run()}
+				class:btn-active={editor.isActive("bold")}
+				class="btn"
+			>
+				<strong>Bold</strong>
+			</button>
+			<button
+				on:click={() => editor.chain().focus().toggleItalic().run()}
+				class:btn-active={editor.isActive("italic")}
+				class="btn"
+			>
+				<i>Italic</i>
+			</button>
+			<button
+				on:click={() => editor.chain().focus().toggleStrike().run()}
+				class:btn-active={editor.isActive("strike")}
+				class="btn"
+			>
+				<s>Strike</s>
+			</button>
+			<button
+				on:click={() => editor.chain().focus().toggleCodeBlock().run()}
+				class:btn-active={editor.isActive("codeBlock")}
+				class="btn"
+			>
+				&lt;Code/&gt;
+			</button>
+		{/if}
 	</div>
 {/if}
 <div class="btn-group m-auto" id="bubble-menu">
@@ -347,7 +362,7 @@
 			class="btn btn-sm"
 			class:btn-active={editor ? editor.isActive("orderedList") : false}
 			on:click={() => editor.chain().focus().toggleOrderedList().run()}
-			>Bullet List</button
+			>Ordered List</button
 		>
 	{/if}
 </div>
@@ -522,7 +537,7 @@
 		</Modal>
 	{/if}
 {/if}
-<div bind:this={element} class="mt-30" />
+<div bind:this={element} class="mt-25" />
 
 <style global>
 	.ProseMirror {
@@ -567,7 +582,10 @@
 		text-align: left;
 		background-color: hsla(var(--b2) / var(--tw-bg-opacity, 1));
 	}
-
+	.ProseMirror a {
+		cursor: pointer;
+		text-decoration: underline;
+	}
 	.selectedCell:after {
 		z-index: 2;
 		position: absolute;

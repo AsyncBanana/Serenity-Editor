@@ -59,46 +59,75 @@ const typeHandlers = {
 		);
 	},
 	codespan: (section) => {
-		return pushMarks(
-			{
-				type: "code",
-			},
-			section.tokens
-		);
+		console.log("codespan");
+		return {
+			type: "text",
+			marks: [
+				{
+					type: "code",
+				},
+			],
+			text: section.text,
+		};
 	},
 	space: () => {
 		return {
-			type: "paragraph"
-		}
+			type: "paragraph",
+		};
 	},
 	hr: () => {
 		return {
-			type: "horizontalLine"
-		}
+			type: "horizontalLine",
+		};
 	},
-	link: () => {
-
+	link: (section) => {
+		const tokens = section.tokens;
+		section.tokens = null;
+		return {
+			type: "text",
+			marks: [
+				{
+					type: "link",
+					attrs: {
+						href: section.href,
+					},
+				},
+			],
+			text: tokens[0].text,
+		};
 	},
 	list: (section) => {
 		return {
-			type: section.ordered?"orderedList":"bulletList",
+			type: section.ordered ? "orderedList" : "bulletList",
 			attrs: {
-				start: section.start
+				start: section.start,
 			},
-			content: convertSubSectionArray(section.items)
-		}
+			content: convertSubSectionArray(section.items),
+		};
 	},
 	list_item: (section) => {
-		let tokens = section.tokens
+		let tokens = section.tokens;
 		section.tokens = null;
 		return {
 			type: "listItem",
-			content: [{
-				type: "paragraph",
-				content: convertSubSectionArray(tokens)
-			}]
-		}
-	}
+			content: [
+				{
+					type: "paragraph",
+					content: convertSubSectionArray(tokens[0].tokens),
+				},
+			],
+		};
+	},
+	image: (section) => {
+		return {
+			type: "image",
+			attrs: {
+				src: section.href,
+				alt: section.text,
+				title: section.title,
+			},
+		};
+	},
 };
 function pushMarks(mark, content) {
 	let result = [];
@@ -119,8 +148,6 @@ function pushMarks(mark, content) {
 	return result;
 }
 function convertSubSection(section) {
-	console.log(section)
-	console.log(section.type);
 	let res = typeHandlers[section.type](section);
 	if (res[0]) {
 		res.forEach((item, index) => {
@@ -152,13 +179,21 @@ function convertSubSectionArray(sectionArray) {
 	});
 	return result;
 }
-
-export function convertFromMarkdown(markdown) {
-	const res = {
-		type: "doc",
-		content: [],
-	};
-	res.content = convertSubSectionArray(new marked.Lexer().lex(markdown));
-	console.log(res);
-	return res;
+/**
+ * Converts a markdown string to a ProseMirror JSON document
+ * @param {String} markdown Markdown string
+ * @param {Boolean} docWrapper Whether to wrap the JSON in a document
+ * @returns {Object} ProseMirror JSON
+ */
+export default function convertFromMarkdown(markdown, docWrapper = true) {
+	if (docWrapper) {
+		const res = {
+			type: "doc",
+			content: [],
+		};
+		res.content = convertSubSectionArray(new marked.Lexer().lex(markdown));
+		return res;
+	} else {
+		return convertSubSectionArray(new marked.Lexer().lex(markdown));
+	}
 }

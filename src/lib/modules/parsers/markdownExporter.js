@@ -115,7 +115,7 @@ function convertSubSectionArray(sectionArray) {
  * @param {Object} doc The ProseMirror JSON document
  * @returns {String} markdown
  */
-export function convertToMarkdown(doc) {
+export default function convertToMarkdown(doc) {
 	if (doc.type !== "doc" || !doc.content) {
 		throw new Error("Invalid JSON");
 	}

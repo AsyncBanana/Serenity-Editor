@@ -1,9 +1,10 @@
-const { transform } = require("windicss/helpers");
+import { transform } from 'windicss/helpers'
 
-module.exports = {
+export default {
   plugins: [transform("daisyui")],
   extract: {
     include: ['src/**/*.{html,svelte}'],
     exclude: ['node_modules', '.git'],
   },
+  darkMode: 'class'
 };
