@@ -153,12 +153,17 @@
 					click: async () => {
 						try {
 							const file = await fileOpen({
-								extensions: [".html", ".txt"],
-								description: "Input text or HTML files",
+								extensions: [".html", ".html", ".txt",".md", ".mdtext"],
+								description: "Input text, markdown or HTML files",
 								multiple: false,
 							});
 							currentFile = file.handle;
-							editor.commands.setContent(await file.text());
+							const extension = file.name.split(".").pop()
+							if (extension==="md"||extension==="mdtext"){
+								editor.commands.setContent(convertFromMarkdown(await file.text()))
+							} else {
+								editor.commands.setContent(await file.text());
+							}
 						} catch (err) {
 							console.log(`Error opening file: ${err}`);
 						}
@@ -167,30 +172,44 @@
 				{
 					name: "Save",
 					click: async () => {
+						if (!currentFile){return}
+						const extension = currentFile.name.split('.').pop()
+						if (extension === "md" || extension === "mdtext") {
 						currentFile = await fileSave(
+							new Blob([convertToMarkdown(editor.getJSON())], { type: "text/markdown" }),
+							{
+								fileName: "document.md",
+								extensions: [".md",".mdtext"],
+							},
+							currentFile
+						)
+						} else {
+							currentFile = await fileSave(
 							new Blob([editor.getHTML()], { type: "text/html" }),
 							{
 								fileName: "document.html",
-								extensions: [".html"],
+								extensions: [".htm",".html"],
 							},
 							currentFile
-						);
+						)
+						}
 					},
+					disabled: !currentFile
 				},
 				{
-					name: "Save As...",
+					name: "Save As HTML...",
 					click: async () => {
 						currentFile = await fileSave(
 							new Blob([editor.getHTML()], { type: "text/html" }),
 							{
 								fileName: "document.html",
-								extensions: [".html"],
+								extensions: [".html",".htm"],
 							}
 						);
 					},
 				},
 				{
-					name: "Export as Markdown",
+					name: "Save As Markdown...",
 					click: () => {
 						fileSave(
 							new Blob([convertToMarkdown(editor.getJSON())], {
@@ -199,19 +218,8 @@
 						),
 							{
 								name: "document.md",
-								extensions: [".md", ".mdk", ".mdtext"],
+								extensions: [".md", ".mdtext"],
 							};
-					},
-				},
-				{
-					name: "Import as Markdown",
-					click: async () => {
-						const file = await fileOpen({
-							extensions: [".md", ".mdk", ".mdtext"],
-							description: "Markdown files",
-							multiple: false,
-						});
-						editor.commands.setContent(convertFromMarkdown(await file.text()));
 					},
 				},
 				{
