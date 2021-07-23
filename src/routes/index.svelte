@@ -23,5 +23,6 @@
 </div>
 <div class="flex justify-center flex-col">
   <h1 class="text-center text-3xl font-bold mb-10">Ready to start?</h1>
-  <a class="btn m-auto mb-30" href="/Editor">Get started</a>
+  <a class="btn m-auto mb-20" href="/Editor">Get started</a>
+  <a class="link m-auto mb-10" href="/PrivacyPolicy">Privacy Policy</a>
 </div>
