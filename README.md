@@ -1,4 +1,16 @@
+
+
+![](https://serenityeditor.com/logo192x192.png)
+
+
+
+
+
 # Serenity Editor
+
+**[Website](https://serenityeditor.com/)**
+
+
 
 Serenity Editor is a light, fast web and desktop text editor with support for markdown shortcuts, WYSIWYG editing, exporting to markdown/HTML, and more. I created it as a replacement for editors like Google Docs because they are clunky and do not support markdown.
 
@@ -6,7 +18,7 @@ Serenity Editor is a light, fast web and desktop text editor with su
 
 # Features
 
-- 🍃Light, with a >5 MB installation size, and installation-less web app.
+- 🍃Light, with a &lt;5 MB installation size, and installation-less web app.
 
 - 🚀Fast and able to handle large text, with more optimization like multi-threaded editing coming soon
 
@@ -16,9 +28,9 @@ Serenity Editor is a light, fast web and desktop text editor with su
 
 
 
+
+
 # Using
-
-
 
 ## PWA
 
@@ -38,9 +50,11 @@ A desktop version of the app for macOS, Linux, and Windows are available in GitH
 
 
 
-# Roadmap
+# Contributing
 
-- Build landing page
+To learn more about contributing to this project, take a look at [CONTRIBUTING.md](https://github.com/AsyncBanana/Serenity-Editor/blob/master/CONTRIBUTING.md).
+
+# Roadmap
 
 - Document usage more
 
