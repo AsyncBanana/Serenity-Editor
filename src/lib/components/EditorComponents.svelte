@@ -49,7 +49,7 @@
 	let tableRows = 3;
 	let tableColumns = 3;
 	let currentFile = null;
-	let screenSize = watchMedia({large: "(min-width: 768px)"});
+	let screenSize = watchMedia({ large: "(min-width: 768px)" });
 	// Settings
 	let settings = {};
 	let settingsDefaults = {
@@ -111,6 +111,10 @@
 				}),
 				FloatingMenu.configure({
 					element: document.querySelector("#floating-menu"),
+					tippyOptions: {
+						zIndex: 30,
+						maxWidth: 500,
+					},
 				}),
 				History,
 				DropCursor,
@@ -153,14 +157,16 @@
 					click: async () => {
 						try {
 							const file = await fileOpen({
-								extensions: [".html", ".html", ".txt",".md", ".mdtext"],
+								extensions: [".html", ".html", ".txt", ".md", ".mdtext"],
 								description: "Input text, markdown or HTML files",
 								multiple: false,
 							});
 							currentFile = file.handle;
-							const extension = file.name.split(".").pop()
-							if (extension==="md"||extension==="mdtext"){
-								editor.commands.setContent(convertFromMarkdown(await file.text()))
+							const extension = file.name.split(".").pop();
+							if (extension === "md" || extension === "mdtext") {
+								editor.commands.setContent(
+									convertFromMarkdown(await file.text())
+								);
 							} else {
 								editor.commands.setContent(await file.text());
 							}
@@ -172,29 +178,33 @@
 				{
 					name: "Save",
 					click: async () => {
-						if (!currentFile){return}
-						const extension = currentFile.name.split('.').pop()
+						if (!currentFile) {
+							return;
+						}
+						const extension = currentFile.name.split(".").pop();
 						if (extension === "md" || extension === "mdtext") {
-						currentFile = await fileSave(
-							new Blob([convertToMarkdown(editor.getJSON())], { type: "text/markdown" }),
-							{
-								fileName: "document.md",
-								extensions: [".md",".mdtext"],
-							},
-							currentFile
-						)
+							currentFile = await fileSave(
+								new Blob([convertToMarkdown(editor.getJSON())], {
+									type: "text/markdown",
+								}),
+								{
+									fileName: "document.md",
+									extensions: [".md", ".mdtext"],
+								},
+								currentFile
+							);
 						} else {
 							currentFile = await fileSave(
-							new Blob([editor.getHTML()], { type: "text/html" }),
-							{
-								fileName: "document.html",
-								extensions: [".htm",".html"],
-							},
-							currentFile
-						)
+								new Blob([editor.getHTML()], { type: "text/html" }),
+								{
+									fileName: "document.html",
+									extensions: [".htm", ".html"],
+								},
+								currentFile
+							);
 						}
 					},
-					disabled: !currentFile
+					disabled: !currentFile,
 				},
 				{
 					name: "Save As HTML...",
@@ -203,23 +213,23 @@
 							new Blob([editor.getHTML()], { type: "text/html" }),
 							{
 								fileName: "document.html",
-								extensions: [".html",".htm"],
+								extensions: [".html", ".htm"],
 							}
 						);
 					},
 				},
 				{
 					name: "Save As Markdown...",
-					click: () => {
-						fileSave(
+					click: async () => {
+						currentFile = await fileSave(
 							new Blob([convertToMarkdown(editor.getJSON())], {
 								type: "text/markdown",
-							})
-						),
+							}),
 							{
 								name: "document.md",
 								extensions: [".md", ".mdtext"],
-							};
+							}
+						);
 					},
 				},
 				{
