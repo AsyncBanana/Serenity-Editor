@@ -1,8 +1,1 @@
-/node_modules/
-/dist/
-/build/
-/.vscode/
-.DS_Store
-stats.html
-/.svelte-kit
-/package
+node_modules
