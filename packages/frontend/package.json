@@ -35,6 +35,7 @@
     "windicss": "^3.1.4"
   },
   "dependencies": {
+    "@auth0/auth0-spa-js": "^1.16.1",
     "@sveltejs/adapter-static": "^1.0.0-next.13",
     "@sveltejs/kit": "^1.0.0-next.128",
     "@tiptap/core": "^2.0.0-beta.85",
@@ -66,7 +67,7 @@
     "@tiptap/extension-task-list": "^2.0.0-beta.16",
     "@tiptap/extension-text": "^2.0.0-beta.12",
     "@tiptap/extension-typography": "^2.0.0-beta.12",
-    "browser-fs-access": "^0.18.0",
+    "browser-fs-access": "^0.18.1",
     "highlight.js": "^11.2.0",
     "lowlight": "^1.20.0",
     "marked": "^2.1.3",

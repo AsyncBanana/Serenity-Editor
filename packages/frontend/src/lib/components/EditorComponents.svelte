@@ -6,10 +6,12 @@
 	import Modal from "$lib/components/Modal.svelte";
 	import Input from "$lib/components/Input.svelte";
 	import Welcome from "$lib/modules/welcome.js";
-	import { fileOpen, fileSave } from "$lib/modules/browser-fs-access/index.js";
+	import { fileOpen, fileSave } from "browser-fs-access";
 	import convertToMarkdown from "$lib/modules/parsers/markdownExporter.js";
 	import convertFromMarkdown from "$lib/modules/parsers/markdownImporter.js";
 	import watchMedia from "svelte-media";
+	import { user, auth0Client } from "$lib/modules/authStore.js";
+	import { init, login, logout, authorizedFetch } from "$lib/modules/auth0.js";
 	// Nodes
 	import Document from "@tiptap/extension-document";
 	import Paragraph from "@tiptap/extension-paragraph";
@@ -138,6 +140,15 @@
 		localStorage.setItem("Text", editor.getHTML());
 	});
 	Welcome();
+	let auth0 = auth0Client
+	let userVal = user
+	auth0Client.subscribe((val)=>{
+		auth0=val
+	})
+	user.subscribe((val)=>{
+		userVal=val
+	})
+	init()
 </script>
 
 {#if editor}
@@ -150,6 +161,19 @@
 					name: "Settings",
 					click: () => {
 						modal = "settings";
+					},
+				},
+				{
+					name: auth0?(userVal?userVal.email:"Login"):"Loading",
+					click: () => {
+						if (auth0) {
+							if (!userVal) {
+								login()
+							} else {
+								// TODO
+								authorizedFetch("http://127.0.0.1:8787/api/documents/save",{method: 'POST'})
+							}
+						}
 					},
 				},
 				{

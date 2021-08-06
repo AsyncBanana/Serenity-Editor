@@ -1,2 +1,0 @@
-// @license © 2020 Google LLC. Licensed under the Apache License, Version 2.0.
-const e=(()=>{if("undefined"==typeof self)return!1;if("top"in self&&self!==top)try{top.location}catch{return!1}else{if("chooseFileSystemEntries"in self)return"chooseFileSystemEntries";if("showOpenFilePicker"in self)return"showOpenFilePicker"}return!1})();export default e;
