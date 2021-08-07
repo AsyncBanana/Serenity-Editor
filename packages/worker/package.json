@@ -1,0 +1,26 @@
+{
+  "private": true,
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "A template for kick starting a Cloudflare Workers project",
+  "source": "src/index.ts",
+  "main": "./dist/worker.js",
+  "exports": "./dist/worker.js",
+  "scripts": {
+    "build": "microbundle build --compress --strict --format modern --external none"
+  },
+  "author": "AsyncBanana <jacobedwardjackson@outlook.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^2.2.2",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "eslint": "^7.32.0",
+    "faunadb": "^4.3.0",
+    "itty-router": "^2.3.10",
+    "jose-browser-runtime": "^3.14.3",
+    "microbundle": "^0.13.3",
+    "prettier": "^1.18.2"
+  },
+  "type": "module"
+}
