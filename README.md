@@ -58,7 +58,7 @@ To learn more about contributing to this project, take a look at [CONTRIBUTING.m
 
 - Document usage more
 
-- Add Cloud sync
+- Add Cloud sync (in progress)
 
 - Add medium exporting
 
