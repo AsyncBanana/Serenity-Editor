@@ -4,7 +4,7 @@ import { fly, fade } from 'svelte/transition';
   export let exit;
 </script>
 <div class="modal visible opacity-100 pointer-events-auto" transition:fade="{{duration: 200}}" on:click={exit}>
-  <div class="modal-box" transition:fly="{{duration: 200, y:20}}" on:click={(e)=>e.stopPropagation()}>
+  <div class="modal-box" transition:fly="{{duration: 200, y:20}}" style="--tw-translate-y: 0" on:click={(e)=>e.stopPropagation()}>
     <span><slot name="body" /></span>
     <div class="modal-action">
       <slot name="actions" />

@@ -2,15 +2,25 @@ import { Router } from 'itty-router'
 import { Client as ClientConstructor, query as q } from 'faunadb'
 import { jwtVerify } from 'jose-browser-runtime/jwt/verify'
 import { createRemoteJWKSet } from 'jose-browser-runtime/jwks/remote'
+import { AwsClient } from 'aws4fetch' // used for Storj S3 compatible API
+import { nanoid } from 'nanoid'
 declare global {
   const FAUNA_SECRET: string
+  const STORJ_KEY: string
+  const STORJ_PASSPHRASE: string
+  const STORJ_ID: string
 }
+const storjClient = new AwsClient({
+  accessKeyId: STORJ_ID,
+  secretAccessKey: STORJ_KEY,
+})
+const storjEndpoint = 'https://gateway.us1.storjshare.io'
 // Makes standard web fetch Cloudflare compatible
 const valueOverrides = {
   mode: undefined,
   credentials: undefined,
   referrerPolicy: undefined,
-  signal: undefined
+  signal: undefined,
 }
 globalThis.fetch = new Proxy(globalThis.fetch, {
   apply: (target, thisArg, argumentsList) => {
@@ -34,12 +44,17 @@ async function getUserId(jwt: string) {
   })
   return res.payload.sub
 }
-// now let's create a router (note the lack of "new")
 const router = Router()
-const client = new ClientConstructor({ secret: FAUNA_SECRET })
+const Faunaclient = new ClientConstructor({ secret: FAUNA_SECRET })
 router.get('/api/', () => new Response('Hello Worker!'))
 router.get('/api/login', () => Response.redirect(''))
-router.post('/api/documents/save', async (request: Request) => {
+router.post('/api/documents/create', async (request: Request) => {
+  if (
+    request.headers.get('Content-Type') !== 'application/x-msgpack' ||
+    request.headers.get('Content-Encoding') !== 'zstd'
+  ) {
+    return new Response('Invalid content type/encoding')
+  }
   const auth = request.headers
     .get('Authorization')
     .split(' ')
@@ -50,18 +65,23 @@ router.post('/api/documents/save', async (request: Request) => {
   const userId = await getUserId(auth)
   if (!userId) {
     return new Response('No userId')
-  } else {
-    return new Response((await userId).toString())
   }
-})
-// GET item
-router.get('/todos/:id', ({ params }) => new Response(`Todo #${params.id}`))
-
-// POST to the collection (we'll use async here)
-router.post('/todos', async (request: Request) => {
-  const content = await request.json()
-
-  return new Response('Creating Todo: ' + JSON.stringify(content))
+  if (!request.headers.get('title')) {
+    return new Response('No document title')
+  }
+  const body = await request.arrayBuffer()
+  if (body.byteLength > 50000000) {
+    return new Response('Document too large')
+  }
+  const id = nanoid()
+  storjClient.fetch(storjEndpoint,{
+    method: 'PUT'
+  })
+  Faunaclient.query(
+    q.Create(q.Collection('Posts'), {
+      data: { Name: request.headers.get('title'), Id: },
+    }),
+  )
 })
 
 // 404 for everything else

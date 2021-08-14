@@ -52,6 +52,12 @@
 	let tableColumns = 3;
 	let currentFile = null;
 	let screenSize = watchMedia({ large: "(min-width: 768px)" });
+	const cloudDialog = {
+		type: 0,
+		items: {"Example Document": true,"Another example": true},
+		current: "",
+		worker: null
+	}
 	// Settings
 	let settings = {};
 	let settingsDefaults = {
@@ -230,6 +236,13 @@
 					},
 					disabled: !currentFile,
 				},
+				/*{
+					name: "Save to Cloud...",
+					click: async () => {
+						cloudDialog.type = 2 // 1 = read, 2 = save
+						modal = "clouddialog"
+					},
+				},*/
 				{
 					name: "Save As HTML...",
 					click: async () => {
@@ -577,6 +590,33 @@
 				>
 			</span>
 		</Modal>
+	{:else if modal="clouddialog"}
+	<Modal exit={()=>modal=false}>
+		<span slot="body">
+			<h1 class="font-bold text-xl">{`${cloudDialog.type===2?"Save to":"Read from"} Cloud`}</h1>
+			<div class="w-full grid lg:grid-cols-2 gap-3 grid-cols-2">
+				{#each Object.keys(cloudDialog.items) as item}
+					<button class="btn">{item}</button>
+				{/each}
+			</div>
+			<div class="flex items-center">
+				<Input name="cloudFileNameDialog" bordered={true} placeholder="Enter file name or choose from above" validate={(val)=>cloudDialog.items[val]} bind:value={cloudDialog.current}/>
+				<button class="btn mt-[1.750rem] ml-3 btn-outline" on:click={()=>modal=false}>Cancel</button>
+				<button class="btn mt-[1.750rem] ml-3" on:click={async ()=>{
+					if (cloudDialog.items[cloudDialog.current]) {
+						if (!cloudDialog.worker) {
+							const file = await import("../modules/cloudWorker.js?worker")
+							cloudDialog.worker = file.default()
+						}
+						cloudDialog.worker.postMessage(editor.getJSON())
+					}
+				}}>{cloudDialog.type===2?"Save as":"Open"}</button>
+			</div>
+		</span>
+		<span slot="actions">
+
+		</span>
+	</Modal>
 	{/if}
 {/if}
 <div bind:this={element} class="mt-25" />

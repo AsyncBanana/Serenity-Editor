@@ -50,6 +50,7 @@ importers:
       svelte: ^3.38.3
       svelte-media: ^0.1.4
       svelte-preprocess: ^4.7.4
+      tiptap-compression: ^0.1.2
       vite: ^2.4.0
       vite-plugin-windicss: ^1.2.3
       windicss: ^3.1.4
@@ -92,6 +93,7 @@ importers:
       marked: 2.1.3
       svelte: 3.41.0
       svelte-media: 0.1.4_svelte@3.41.0
+      tiptap-compression: 0.1.2
     devDependencies:
       daisyui: 1.10.0
       eslint: 7.32.0
@@ -110,12 +112,17 @@ importers:
       '@cloudflare/workers-types': ^2.2.2
       '@typescript-eslint/eslint-plugin': ^4.29.0
       '@typescript-eslint/parser': ^4.29.0
+      aws4fetch: ^1.0.13
       eslint: ^7.32.0
       faunadb: ^4.3.0
       itty-router: ^2.3.10
       jose-browser-runtime: ^3.14.3
       microbundle: ^0.13.3
+      nanoid: ^3.1.25
       prettier: ^1.18.2
+    dependencies:
+      aws4fetch: 1.0.13
+      nanoid: 3.1.25
     devDependencies:
       '@cloudflare/workers-types': 2.2.2
       '@typescript-eslint/eslint-plugin': 4.29.0_9deb0c6c52cef3567a1cb10895d55fb2
@@ -1379,6 +1386,10 @@ packages:
       to-fast-properties: 2.0.0
     dev: true
 
+  /@bokuweb/zstd-wasm/0.0.14:
+    resolution: {integrity: sha512-5pkce57OteVrDbtkEi2lWF8viH4MtMLry6BikYV1xtkVxTXQuOu6cLBv08yGWrEfw/oRp6TAkpTAndOVx9OpKA==}
+    dev: false
+
   /@cloudflare/workers-types/2.2.2:
     resolution: {integrity: sha512-kaMn2rueJ0PL1TYVGknTCh0X0x0d9G+FNXAFep7/4uqecEZoQb/63o6rOmMuiqI09zLuHV6xhKRXinokV/MY9A==}
     dev: true
@@ -2243,6 +2254,10 @@ packages:
       postcss: 8.3.6
       postcss-value-parser: 4.1.0
     dev: true
+
+  /aws4fetch/1.0.13:
+    resolution: {integrity: sha512-UTlirJkLtGbJurR9PlL4rOZ9HM1G/1/joWItpVwQ0f7j5Alldd7rfCMcy2kd0l2nDZ4LBdd6cFhrMwsEtazCNw==}
+    dev: false
 
   /babel-plugin-dynamic-import-node/2.3.3:
     resolution: {integrity: sha512-jZVI+s9Zg3IqA/kdi0i6UDCybUI3aSBLnglhYbSSjKlV7yF1F/5LWv8MakQmvYpnbJDS6fcBL2KzHSxNCMtWSQ==}
@@ -3945,10 +3960,36 @@ packages:
   /ms/2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
 
+  /msgpackr-extract/1.0.13:
+    resolution: {integrity: sha512-JlQPllMLETiuQ5Vv3IAz+4uOpd1GZPOoCHv9P5ka5P5gkTssm/ejv0WwS4xAfB9B3vDwrExRwuU8v3HRQtJk2Q==}
+    requiresBuild: true
+    dependencies:
+      nan: 2.15.0
+      node-gyp-build: 4.2.3
+    dev: false
+    optional: true
+
+  /msgpackr/1.4.1:
+    resolution: {integrity: sha512-MpWMDesptwYJcHgKWkPoOcJR0hrWNfIxdhwrKac0uYDEm+fb9P+ONVbGPttbtez+P43Bqxo601AiZl78Ze6X/A==}
+    optionalDependencies:
+      msgpackr-extract: 1.0.13
+    dev: false
+
+  /nan/2.15.0:
+    resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
+    dev: false
+    optional: true
+
   /nanoid/3.1.23:
     resolution: {integrity: sha512-FiB0kzdP0FFVGDKlRLEQ1BgDzU87dy5NnzjeW9YZNt+/c3+q82EQDUwniSAUxp/F0gFNI1ZhKU1FqYsMuqZVnw==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
+
+  /nanoid/3.1.25:
+    resolution: {integrity: sha512-rdwtIXaXCLFAQbnfqDRnI6jaRHp9fTcYBjtFKE8eezcZ7LuLjhUaQGNeMXf1HmRoCH32CLz6XwX0TtxEOS/A3Q==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+    dev: false
 
   /natural-compare/1.4.0:
     resolution: {integrity: sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=}
@@ -3958,6 +3999,12 @@ packages:
     resolution: {integrity: sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==}
     engines: {node: 4.x || >=6.0.0}
     dev: true
+
+  /node-gyp-build/4.2.3:
+    resolution: {integrity: sha512-MN6ZpzmfNCRM+3t57PTJHgHyw/h4OWnZ6mR8P5j/uZtqQr46RRuDE/P+g3n0YR/AiYXeWixZZzaip77gdICfRg==}
+    hasBin: true
+    dev: false
+    optional: true
 
   /node-releases/1.1.73:
     resolution: {integrity: sha512-uW7fodD6pyW2FZNZnp/Z3hvWKeEW1Y8R1+1CnErE8cXFXzl5blBOoVB41CvMer6P6Q0S5FXDwcHgFd1Wj0U9zg==}
@@ -5244,6 +5291,13 @@ packages:
     resolution: {integrity: sha512-JnFncCq+rF1dTURupoJ4yPie5Cof978inW6/4S6kmWV7LL9YOSEVMifED3KdrVPEG+Z/TFH2CDNJcQEfaeuQww==}
     dependencies:
       '@popperjs/core': 2.9.2
+    dev: false
+
+  /tiptap-compression/0.1.2:
+    resolution: {integrity: sha512-OizOyOYIK3IAEdz+EH62HTK5gciaz4QJibUa6fnhnHgW2eEYppXRHvc3DuS44V63JsnJWLIDe7MZq0/1zoLc7Q==}
+    dependencies:
+      '@bokuweb/zstd-wasm': 0.0.14
+      msgpackr: 1.4.1
     dev: false
 
   /to-fast-properties/2.0.0:
