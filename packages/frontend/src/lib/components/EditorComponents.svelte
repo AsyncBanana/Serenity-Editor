@@ -51,12 +51,12 @@
 	let tableRows = 3;
 	let tableColumns = 3;
 	let currentFile = null;
+	let apiBase = import.meta.env.dev?"http://localhost:8787/":"/"
 	let screenSize = watchMedia({ large: "(min-width: 768px)" });
 	const cloudDialog = {
 		type: 0,
 		items: {"Example Document": true,"Another example": true},
-		current: "",
-		worker: null
+		current: ""
 	}
 	// Settings
 	let settings = {};
@@ -603,12 +603,10 @@
 				<Input name="cloudFileNameDialog" bordered={true} placeholder="Enter file name or choose from above" validate={(val)=>cloudDialog.items[val]} bind:value={cloudDialog.current}/>
 				<button class="btn mt-[1.750rem] ml-3 btn-outline" on:click={()=>modal=false}>Cancel</button>
 				<button class="btn mt-[1.750rem] ml-3" on:click={async ()=>{
-					if (cloudDialog.items[cloudDialog.current]) {
-						if (!cloudDialog.worker) {
-							const file = await import("../modules/cloudWorker.js?worker")
-							cloudDialog.worker = file.default()
+					if (cloudDialog.type===1){
+						if (cloudDialog.items[cloudDialog.current]) {
+						
 						}
-						cloudDialog.worker.postMessage(editor.getJSON())
 					}
 				}}>{cloudDialog.type===2?"Save as":"Open"}</button>
 			</div>
