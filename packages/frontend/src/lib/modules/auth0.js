@@ -5,20 +5,27 @@ let auth0 = null;
 user.subscribe((val) => {
 	userVal = val;
 });
-auth0Client.subscribe((val)=>{
-	auth0 = val
-})
+auth0Client.subscribe((val) => {
+	auth0 = val;
+});
 export async function init() {
-	auth0Client.set(await createAuth0Client({
-		domain: "serenityeditor.us.auth0.com",
-		client_id: "zdz9ihp0rEr2tNnbp8ezyuErPq2wXQMx",
-		redirect_uri: location.href,
-		cacheLocation: "localstorage",
-		audience: "https://serenityeditor.com/api"
-	}));
+	auth0Client.set(
+		await createAuth0Client({
+			domain: "serenityeditor.us.auth0.com",
+			client_id: "zdz9ihp0rEr2tNnbp8ezyuErPq2wXQMx",
+			redirect_uri: location.href,
+			cacheLocation: "localstorage",
+			audience: "https://serenityeditor.com/api",
+		})
+	);
 	if (location.href.split("?").slice(1).length > 0) {
 		await auth0.handleRedirectCallback();
 		user.set(await auth0.getUser());
+		window.history.replaceState(
+			{},
+			document.title,
+			window.location.toString().split("?")[0]
+		);
 	}
 	return auth0;
 }
@@ -45,8 +52,10 @@ export function authorizedFetch(url, settings = {}) {
 			promise = Promise.all([auth0.getTokenSilently()]);
 		}
 		promise.then(([token]) => {
-			if (!settings.headers){settings.headers={}}
-			settings.headers.Authorization = `Bearer ${token}`
+			if (!settings.headers) {
+				settings.headers = {};
+			}
+			settings.headers.Authorization = `Bearer ${token}`;
 			fetch(url, settings)
 				.then((value) => resolve(value))
 				.catch((err) => reject(err));

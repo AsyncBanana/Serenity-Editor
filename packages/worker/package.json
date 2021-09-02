@@ -7,7 +7,7 @@
   "main": "./dist/worker.js",
   "exports": "./dist/worker.js",
   "scripts": {
-    "build": "microbundle build --compress --strict --format modern --external none"
+    "build": "node scripts/esbuild.js"
   },
   "author": "AsyncBanana <jacobedwardjackson@outlook.com>",
   "license": "MIT",
@@ -19,12 +19,12 @@
     "faunadb": "^4.3.0",
     "itty-router": "^2.4.2",
     "jose-browser-runtime": "^3.14.3",
-    "microbundle": "^0.13.3",
     "prettier": "^1.19.1"
   },
   "type": "module",
   "dependencies": {
     "aws4fetch": "^1.0.13",
-    "nanoid": "^3.1.25"
+    "esbuild": "^0.12.24",
+    "msgpackr": "^1.4.2"
   }
 }

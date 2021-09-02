@@ -12,6 +12,9 @@
 	import watchMedia from "svelte-media";
 	import { user, auth0Client } from "$lib/modules/authStore.js";
 	import { init, login, logout, authorizedFetch } from "$lib/modules/auth0.js";
+	import { pack, unpack } from "msgpackr";
+	import { Compress, Decompress } from "$lib/modules/tiptap-compress";
+	import deepClone from "$lib/modules/deepCopy";
 	// Nodes
 	import Document from "@tiptap/extension-document";
 	import Paragraph from "@tiptap/extension-paragraph";
@@ -51,13 +54,13 @@
 	let tableRows = 3;
 	let tableColumns = 3;
 	let currentFile = null;
-	let apiBase = import.meta.env.dev?"http://localhost:8787/":"/"
+	let apiBase = import.meta.env.dev ? "http://localhost:8787/" : "/";
 	let screenSize = watchMedia({ large: "(min-width: 768px)" });
 	const cloudDialog = {
 		type: 0,
-		items: {"Example Document": true,"Another example": true},
-		current: ""
-	}
+		items: { "Example Document": true, "Another example": true },
+		current: "",
+	};
 	// Settings
 	let settings = {};
 	let settingsDefaults = {
@@ -146,19 +149,19 @@
 		localStorage.setItem("Text", editor.getHTML());
 	});
 	Welcome();
-	let auth0 = auth0Client
-	let userVal = user
-	auth0Client.subscribe((val)=>{
-		auth0=val
-	})
-	user.subscribe((val)=>{
-		userVal=val
-	})
-	init()
+	let auth0 = auth0Client;
+	let userVal = user;
+	auth0Client.subscribe((val) => {
+		auth0 = val;
+	});
+	user.subscribe((val) => {
+		userVal = val;
+	});
+	init();
 </script>
 
 {#if editor}
-	<div class="btn-group fixed top-10 z-40" id="topMenu">
+	<div class="top-10 z-40 btn-group fixed" id="topMenu">
 		<!-- svelte-ignore missing-declaration -->
 		<NavDropdown
 			first
@@ -170,14 +173,21 @@
 					},
 				},
 				{
-					name: auth0?(userVal?userVal.email:"Login"):"Loading",
+					name: auth0 ? (userVal ? userVal.email : "Login") : "Loading",
 					click: () => {
 						if (auth0) {
 							if (!userVal) {
-								login()
+								login();
 							} else {
 								// TODO
-								authorizedFetch("http://127.0.0.1:8787/api/documents/save",{method: 'POST'})
+								authorizedFetch("http://127.0.0.1:8787/api/documents", {
+									method: "POST",
+									body: pack(Compress(deepClone(editor.getJSON()))),
+									headers: {
+										"Content-Type": "application/msgpack",
+										Title: "Untitled",
+									},
+								});
 							}
 						}
 					},
@@ -364,7 +374,7 @@
 		{/if}
 	</div>
 {/if}
-<div class="btn-group m-auto" id="bubble-menu">
+<div class="m-auto btn-group" id="bubble-menu">
 	<button
 		class="btn"
 		class:btn-active={editor ? editor.isActive("bold") : false}
@@ -590,34 +600,45 @@
 				>
 			</span>
 		</Modal>
-	{:else if modal="clouddialog"}
-	<Modal exit={()=>modal=false}>
-		<span slot="body">
-			<h1 class="font-bold text-xl">{`${cloudDialog.type===2?"Save to":"Read from"} Cloud`}</h1>
-			<div class="w-full grid lg:grid-cols-2 gap-3 grid-cols-2">
-				{#each Object.keys(cloudDialog.items) as item}
-					<button class="btn">{item}</button>
-				{/each}
-			</div>
-			<div class="flex items-center">
-				<Input name="cloudFileNameDialog" bordered={true} placeholder="Enter file name or choose from above" validate={(val)=>cloudDialog.items[val]} bind:value={cloudDialog.current}/>
-				<button class="btn mt-[1.750rem] ml-3 btn-outline" on:click={()=>modal=false}>Cancel</button>
-				<button class="btn mt-[1.750rem] ml-3" on:click={async ()=>{
-					if (cloudDialog.type===1){
-						if (cloudDialog.items[cloudDialog.current]) {
-						
-						}
-					}
-				}}>{cloudDialog.type===2?"Save as":"Open"}</button>
-			</div>
-		</span>
-		<span slot="actions">
-
-		</span>
-	</Modal>
+	{:else if (modal = "clouddialog")}
+		<Modal exit={() => (modal = false)}>
+			<span slot="body">
+				<h1 class="font-bold text-xl">
+					{`${cloudDialog.type === 2 ? "Save to" : "Read from"} Cloud`}
+				</h1>
+				<div class="w-full grid gap-3 grid-cols-2 lg:grid-cols-2">
+					{#each Object.keys(cloudDialog.items) as item}
+						<button class="btn">{item}</button>
+					{/each}
+				</div>
+				<div class="flex items-center">
+					<Input
+						name="cloudFileNameDialog"
+						bordered={true}
+						placeholder="Enter file name or choose from above"
+						validate={(val) => cloudDialog.items[val]}
+						bind:value={cloudDialog.current}
+					/>
+					<button
+						class="mt-[1.750rem] ml-3 btn btn-outline"
+						on:click={() => (modal = false)}>Cancel</button
+					>
+					<button
+						class="mt-[1.750rem] ml-3 btn"
+						on:click={async () => {
+							if (cloudDialog.type === 1) {
+								if (cloudDialog.items[cloudDialog.current]) {
+								}
+							}
+						}}>{cloudDialog.type === 2 ? "Save as" : "Open"}</button
+					>
+				</div>
+			</span>
+			<span slot="actions" />
+		</Modal>
 	{/if}
 {/if}
-<div bind:this={element} class="mt-25" />
+<div bind:this={element} class="mt-25 md:w-3/4" />
 
 <style global>
 	.ProseMirror {
